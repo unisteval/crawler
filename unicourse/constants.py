@@ -1,4 +1,4 @@
-SOURCE_URL = 'http://uspap1.unist.ac.kr:8000/sap/bc/webdynpro/sap/zcmw5223#'
+SOURCE_URL = 'http://uspap1.unist.ac.kr:8000/sap/bc/webdynpro/sap/zcmw5223'
 HOST_URL = 'http://uspap1.unist.ac.kr:8000'
 
 REQUEST_HEADERS = {

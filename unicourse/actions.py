@@ -42,15 +42,20 @@ class Search:
 
 
     def search_string(self, string): 
-        self.data['SAPEVENTQUEUE'] = "ComboBox_ListAccess~E002Id~E004WDF7~E005ItemListBoxId~E004WDF8~E005FilterValue~E004"
+        self.data['SAPEVENTQUEUE'] = "ComboBox_ListAccess~E002Id~E004WDF8~E005ItemListBoxId~E004WDF9~E005FilterValue~E004"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(string)
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005ClientAction~E004submitAsync~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
 
-        self.data['SAPEVENTQUEUE'] = "ComboBox_Change~E002Id~E004WDF7~E005Value~E004"
+        self.data['SAPEVENTQUEUE'] = "ComboBox_Change~E002Id~E004WDF8~E005Value~E004"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(string)
-        self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E005Delay~E004full~E003~E002~E003~E001Button_Press~E002Id~E004WDFA~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
+        self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E005Delay~E004full~E003~E002~E003~E001Button_Press~E002Id~E004WDFB~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
+    
+    def get_excel(self):
+        self.data['SAPEVENTQUEUE'] = "Button_Press~E002Id~E004WD99~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
+        self.res = self.sess.post(self.url, data=self.data)
+        print(self.res.text)
 
     def get_text(self):
         return self.res.text
