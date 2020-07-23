@@ -12,6 +12,7 @@ class Search:
         
         self.sess.headers = REQUEST_HEADERS
         self.data['sap-wd-secure-id'] = sapid
+        self.contextid = contextid
         self.url = self.url + contextid
         
         self.data['SAPEVENTQUEUE'] = INIT_EVENTQUEUE
@@ -53,9 +54,24 @@ class Search:
         self.res = self.sess.post(self.url, data=self.data)
     
     def get_excel(self):
+        xsess = requests.Session()
+        xsess.headers = EXCEL_HEADERS
+
         self.data['SAPEVENTQUEUE'] = "Button_Press~E002Id~E004WD99~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
-        print(self.res.text)
+
+        fileid, action = get_excel_url(BeautifulSoup(self.res.text,'lxml-xml'))        
+        xurl = HOST_URL + action
+        xurl = xurl.replace("\\x2f","/")
+        xurl = xurl.replace("\\x7e","~")
+        xurl = xurl.replace("\\x3f", "?")
+        xurl = xurl.replace("\\x2d","-")
+        xurl = xurl.replace("\\x3d","=")
+        xurl = xurl.replace("\\x253a",":")
+        xurl = xurl.replace("\\x26","&")
+        xres = xsess.post(xurl)
+        with open('./export.xlsx','wb') as f:
+            f.write(xres.content)
 
     def get_text(self):
         return self.res.text

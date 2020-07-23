@@ -7,17 +7,12 @@ if __name__ == "__main__":
     year = int(input("Year: "))
     semester = int(input("Semester: "))
 
-    #year = 2019
-    #semester = 90
-
     search.set_period(year,semester)
 
     string = input("Search: ")
 
-    #string = 'CSE'
-
     search.search_string(string)
 
-    print(search.get_text()) 
+    search.get_excel()
     
 
