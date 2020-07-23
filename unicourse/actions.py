@@ -1,5 +1,5 @@
-from constants import *
-from parser import *
+from .constants import *
+from .parser import *
 import requests
 from bs4 import BeautifulSoup
 
@@ -53,7 +53,7 @@ class Search:
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E005Delay~E004full~E003~E002~E003~E001Button_Press~E002Id~E004WDFB~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
     
-    def get_excel(self):
+    def get_excel(self, file_name):
         xsess = requests.Session()
         xsess.headers = EXCEL_HEADERS
 
@@ -70,8 +70,10 @@ class Search:
         xurl = xurl.replace("\\x253a",":")
         xurl = xurl.replace("\\x26","&")
         xres = xsess.post(xurl)
-        with open('./export.xlsx','wb') as f:
+        
+        with open(file_name,'wb') as f:
             f.write(xres.content)
+
 
     def get_text(self):
         return self.res.text
@@ -101,3 +103,18 @@ def initaction():
     
     return sapid, contextid
 
+
+def get_file(year, semester, string, file_name):
+    sapid, contextid = initaction()
+    semester_dict = {"1st":90,"summer":91,"2nd":92,"winter":93,"3rd":93}
+
+    search = Search(sapid, contextid)
+
+    if semester in [90,91,92,93]:
+        search.set_period(year,semester)
+    elif semester in semester_dict:
+        search.set_period(year,semester_dict[semester])
+
+    search.search_string(string)
+
+    search.get_excel(file_name)
