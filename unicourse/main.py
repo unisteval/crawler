@@ -18,8 +18,6 @@ if __name__ == "__main__":
 
     search.search_string(string)
 
-    search.get_excel()
-   
-    print(search.get_text())
+    print(search.get_text()) 
     
 
