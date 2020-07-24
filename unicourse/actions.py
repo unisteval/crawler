@@ -15,6 +15,7 @@ class Search:
         self.contextid = contextid
         self.url = self.url + contextid
         
+        #Initial session loading
         self.data['SAPEVENTQUEUE'] = INIT_EVENTQUEUE
         self.res = self.sess.post(self.url, data=self.data)
 
@@ -24,12 +25,14 @@ class Search:
         self.res = self.sess.post(self.url, data=self.data)
 
 
-    def set_period(self, year,semester):
+    def set_period(self, year, semester):
         """
         semester 1: 90
         semester summer: 91
         semester 2: 92
         semester winter: 93
+        
+        Setting year and semester on session
         """
         self.data['SAPEVENTQUEUE'] = "ComboBox_Select~E002Id~E004WD31~E005Key~E004"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(year)
@@ -42,25 +45,38 @@ class Search:
         self.res = self.sess.post(self.url, data=self.data)
 
 
-    def search_string(self, string): 
+    def search_string(self, string):
+        """
+        Search string on session
+        """
+        #This part type string on box
         self.data['SAPEVENTQUEUE'] = "ComboBox_ListAccess~E002Id~E004WDF8~E005ItemListBoxId~E004WDF9~E005FilterValue~E004"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(string)
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005ClientAction~E004submitAsync~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
 
+        #This part click "search" button on site
         self.data['SAPEVENTQUEUE'] = "ComboBox_Change~E002Id~E004WDF8~E005Value~E004"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(string)
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E005Delay~E004full~E003~E002~E003~E001Button_Press~E002Id~E004WDFB~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
     
     def get_excel(self, file_name):
+        """
+        get excel file from session
+        """
+        #Start excel session
         xsess = requests.Session()
         xsess.headers = EXCEL_HEADERS
-
+        
+        #prepare excel session
         self.data['SAPEVENTQUEUE'] = "Button_Press~E002Id~E004WD99~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
 
+        #parse data from prepared excel session
         fileid, action = get_excel_url(BeautifulSoup(self.res.text,'lxml-xml'))        
+        
+        #replace
         xurl = HOST_URL + action
         xurl = xurl.replace("\\x2f","/")
         xurl = xurl.replace("\\x7e","~")
@@ -71,11 +87,15 @@ class Search:
         xurl = xurl.replace("\\x26","&")
         xres = xsess.post(xurl)
         
+        #write file
         with open(file_name,'wb') as f:
             f.write(xres.content)
 
 
     def get_text(self):
+        """
+        get result text, use for debug
+        """
         return self.res.text
 
 
@@ -105,6 +125,9 @@ def initaction():
 
 
 def get_file(year, semester, string, file_name):
+    """
+    capsulize get excel file step
+    """
     sapid, contextid = initaction()
     semester_dict = {"1st":90,"summer":91,"2nd":92,"winter":93,"3rd":93}
 
