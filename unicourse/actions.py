@@ -2,7 +2,7 @@ from .constants import *
 from .parser import *
 import requests
 from bs4 import BeautifulSoup
-
+from datetime import datetime
 
 class Search:
     def __init__(self, sapid, contextid):
@@ -31,7 +31,8 @@ class Search:
         semester summer: 91
         semester 2: 92
         semester winter: 93
-        
+        semester 3: 94
+
         Setting year and semester on session
         """
         self.data['SAPEVENTQUEUE'] = "ComboBox_Select~E002Id~E004WD31~E005Key~E004"
@@ -50,17 +51,17 @@ class Search:
         Search string on session
         """
         #This part type string on box
-        self.data['SAPEVENTQUEUE'] = "ComboBox_ListAccess~E002Id~E004WDF8~E005ItemListBoxId~E004WDF9~E005FilterValue~E004"
+        self.data['SAPEVENTQUEUE'] = "ComboBox_ListAccess~E002Id~E004WDFA~E005ItemListBoxId~E004WDFB~E005FilterValue~E004"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(string)
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005ClientAction~E004submitAsync~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
 
         #This part click "search" button on site
-        self.data['SAPEVENTQUEUE'] = "ComboBox_Change~E002Id~E004WDF8~E005Value~E004"
+        self.data['SAPEVENTQUEUE'] = "ComboBox_Change~E002Id~E004WDFA~E005Value~E004"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(string)
-        self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E005Delay~E004full~E003~E002~E003~E001Button_Press~E002Id~E004WDFB~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
+        self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E005Delay~E004full~E003~E002~E003~E001Button_Press~E002Id~E004WDFD~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
-    
+
     def get_excel(self, file_name):
         """
         get excel file from session
@@ -70,7 +71,7 @@ class Search:
         xsess.headers = EXCEL_HEADERS
         
         #prepare excel session
-        self.data['SAPEVENTQUEUE'] = "Button_Press~E002Id~E004WD99~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
+        self.data['SAPEVENTQUEUE'] = "Button_Press~E002Id~E004WD9B~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
 
         #parse data from prepared excel session
@@ -129,7 +130,17 @@ def get_file(year, semester, string, file_name):
     capsulize get excel file step
     """
     sapid, contextid = initaction()
-    semester_dict = {"1st":90,"summer":91,"2nd":92,"winter":93,"3rd":93}
+    semester_dict = {"1st":90,"summer":91,"2nd":92,"winter":93,"3rd":94}
+
+    if year < 2009 or year > datetime.today().year:
+        raise YearError();
+
+    if year == 2012 or year == 2013:
+        if semester == 93 or semester == "winter":
+            raise SemesterError
+    else:
+        if semester == 94 or semester == "3rd":
+            raise SemesterError
 
     search = Search(sapid, contextid)
 
