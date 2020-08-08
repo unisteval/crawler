@@ -35,12 +35,14 @@ class Search:
 
         Setting year and semester on session
         """
-        self.data['SAPEVENTQUEUE'] = "ComboBox_Select~E002Id~E004WD31~E005Key~E004"
+        self.data['SAPEVENTQUEUE'] = "ComboBox_Select~E002Id~E004" + \
+            year_component + "~E005Key~E004"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(year)
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E005ByEnter~E004false~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
 
-        self.data['SAPEVENTQUEUE'] = "ComboBox_Select~E002Id~E004WD4B~E005Key~E0040"
+        self.data['SAPEVENTQUEUE'] = "ComboBox_Select~E002Id~E004" + \
+            semester_component + "~E005Key~E0040"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(semester)
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E005ByEnter~E004false~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
@@ -51,16 +53,22 @@ class Search:
         Search string on session
         """
         #This part type string on box
-        self.data['SAPEVENTQUEUE'] = "ComboBox_ListAccess~E002Id~E004WDFA~E005ItemListBoxId~E004WDFB~E005FilterValue~E004"
+        self.data['SAPEVENTQUEUE'] = "ComboBox_ListAccess~E002Id~E004" + \
+            search_component + "~E005ItemListBoxId~E004" + \
+                searchBox_component + "~E005FilterValue~E004"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(string)
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005ClientAction~E004submitAsync~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
 
         #This part click "search" button on site
-        self.data['SAPEVENTQUEUE'] = "ComboBox_Change~E002Id~E004WDFA~E005Value~E004"
+        self.data['SAPEVENTQUEUE'] = "ComboBox_Change~E002Id~E004" + \
+            search_component + "~E005Value~E004"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(string)
-        self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E005Delay~E004full~E003~E002~E003~E001Button_Press~E002Id~E004WDFD~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
+        self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E005Delay~E004full~E003~E002~E003~E001Button_Press~E002Id~E004" + \
+                searchButton_component + "~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
+        print(self.res.text)
+
 
     def get_excel(self, file_name):
         """
@@ -71,7 +79,8 @@ class Search:
         xsess.headers = EXCEL_HEADERS
         
         #prepare excel session
-        self.data['SAPEVENTQUEUE'] = "Button_Press~E002Id~E004WD9B~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
+        self.data['SAPEVENTQUEUE'] = "Button_Press~E002Id~E004" + \
+            download_component + "~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
 
         #parse data from prepared excel session

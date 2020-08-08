@@ -1,3 +1,10 @@
+year_component = "WD31" 
+semester_component = "WD4B"
+search_component = "WDFA"
+searchBox_component = "WDFB"
+searchButton_component = "WDFD"
+download_component = "WD9B"
+
 SOURCE_URL = 'http://uspap1.unist.ac.kr:8000/sap/bc/webdynpro/sap/zcmw5223'
 HOST_URL = 'http://uspap1.unist.ac.kr:8000'
 
