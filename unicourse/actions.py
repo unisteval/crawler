@@ -6,6 +6,7 @@ from datetime import datetime
 
 class Search:
     def __init__(self, sapid, contextid):
+        global SEARCH_EVENTQUEUE
         self.sess = requests.Session()
         self.data = {'sap-charset': 'utf-8'}
         self.url = HOST_URL
@@ -21,7 +22,7 @@ class Search:
 
         #This part select search mode
         self.data['_stateful_'] = "X"
-        self.data['SAPEVENTQUEUE'] = SEARCH_EVENTQUEUE
+        self.data['SAPEVENTQUEUE'] = search_eventqueue()
         self.res = self.sess.post(self.url, data=self.data)
 
 
@@ -34,6 +35,7 @@ class Search:
         semester 3: 94
 
         Setting year and semester on session
+        
         """
         self.data['SAPEVENTQUEUE'] = "ComboBox_Select~E002Id~E004" + \
             year_component + "~E005Key~E004"
@@ -52,14 +54,24 @@ class Search:
         """
         Search string on session
         """
-        #This part type string on box
+        global search_component
+        global searchBox_component
+        global searchButton_component
+
+        search_soup = BeautifulSoup(self.res.text, 'lxml')
+        
+        search_component = get_search_component(search_soup)
+        searchBox_component = get_search_box_component(search_soup)
+        searchButton_component = get_search_button_component(search_soup)
+
+       #This part type string on box
         self.data['SAPEVENTQUEUE'] = "ComboBox_ListAccess~E002Id~E004" + \
             search_component + "~E005ItemListBoxId~E004" + \
                 searchBox_component + "~E005FilterValue~E004"
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + str(string)
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005ClientAction~E004submitAsync~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
-
+        
         #This part click "search" button on site
         self.data['SAPEVENTQUEUE'] = "ComboBox_Change~E002Id~E004" + \
             search_component + "~E005Value~E004"
@@ -67,13 +79,17 @@ class Search:
         self.data['SAPEVENTQUEUE'] = self.data['SAPEVENTQUEUE'] + "~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E005Delay~E004full~E003~E002~E003~E001Button_Press~E002Id~E004" + \
                 searchButton_component + "~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         self.res = self.sess.post(self.url, data=self.data)
-        print(self.res.text)
 
 
     def get_excel(self, file_name):
         """
         get excel file from session
         """
+        global download_component
+
+        download_soup = BeautifulSoup(self.res.text, 'lxml')
+        download_component = get_download_component(download_soup)
+
         #Start excel session
         xsess = requests.Session()
         xsess.headers = EXCEL_HEADERS
@@ -109,10 +125,14 @@ class Search:
         return self.res.text
 
 
-def initaction():
+def initsession():
     """
     get sap-wd-secure-id, session contextid
     """
+    global stringSearch_component
+    global year_component
+    global semester_component
+
     sess = requests.Session()
     soup_jar = {'hello':'hello'}
     sess.headers = SESSION_HEADERS
@@ -130,7 +150,13 @@ def initaction():
 
     sapid = get_sap_wd_secure_id(soup_jar['base'])
     contextid = get_sap_contextid(soup_jar['base'])
-    
+    stringSearchClass_component = \
+            get_string_search_class_component(soup_jar['base'])
+    stringSearch_component = \
+            get_string_search_component(soup_jar['base']) 
+    year_component = get_year_component(soup_jar['base'])
+    semester_component = get_semester_component(soup_jar['base'])
+
     return sapid, contextid
 
 
@@ -138,7 +164,7 @@ def get_file(year, semester, string, file_name):
     """
     capsulize get excel file step
     """
-    sapid, contextid = initaction()
+    sapid, contextid = initsession()
     semester_dict = {"1st":90,"summer":91,"2nd":92,"winter":93,"3rd":94}
 
     if year < 2009 or year > datetime.today().year:

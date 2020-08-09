@@ -1,5 +1,7 @@
 year_component = "WD31" 
 semester_component = "WD4B"
+stringSearch_component = "WD53"
+stringSearchClass_component = "WD54"
 search_component = "WDFA"
 searchBox_component = "WDFB"
 searchButton_component = "WDFD"
@@ -50,4 +52,11 @@ EXCEL_HEADERS = {
 
 INIT_EVENTQUEUE = "ClientInspector_Notify~E002Id~E004WD01~E005Data~E004ClientWidth~003A150px~003BClientHeight~003A759px~003BScreenWidth~003A1368px~003BScreenHeight~003A912px~003BScreenOrientation~003Alandscape~003BThemedTableRowHeight~003A21px~003BThemedFormLayoutRowHeight~003A25px~003BDeviceType~003ADESKTOP~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E003~E002~E003~E001Custom_ClientInfos~E002Id~E004WD01~E005WindowOpenerExists~E004false~E005ClientURL~E004http~003A~002F~002Fuspap1.unist.ac.kr~003A8000~002Fsap~002Fbc~002Fwebdynpro~002Fsap~002Fzcmw5223~0023~E005ClientWidth~E004150~E005ClientHeight~E004759~E005DocumentDomain~E004unist.ac.kr~E005IsTopWindow~E004true~E005ParentAccessible~E004true~E003~E002ClientAction~E004enqueue~E005ResponseData~E004delta~E003~E002~E003~E001LoadingPlaceHolder_Load~E002Id~E004_loadingPlaceholder_~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
 
-SEARCH_EVENTQUEUE = "TabStrip_TabSelect~E002Id~E004WD53~E005ItemId~E004WD54~E005ItemIndex~E0040~E005FirstVisibleItemIndex~E004-1~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
+SEARCH_EVENTQUEUE = ""
+
+def search_eventqueue():
+    global SEARCH_EVENTQUEUE
+    SEARCH_EVENTQUEUE = "TabStrip_TabSelect~E002Id~E004" + \
+        stringSearch_component + "~E005ItemId~E004" + \
+        stringSearchClass_component +"~E005ItemIndex~E0040~E005FirstVisibleItemIndex~E004-1~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
+    return SEARCH_EVENTQUEUE
