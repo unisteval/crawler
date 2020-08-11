@@ -118,6 +118,7 @@ class Search:
             f.write(xres.content)
 
 
+
     def get_text(self):
         """
         get result text, use for debug
